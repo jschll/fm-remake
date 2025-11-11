@@ -1,0 +1,307 @@
+@use "../../variables" as vars;
+@use "../../mixins" as mixins;
+
+// =============================================================================
+// FRAMED SECTION COMPONENT
+// =============================================================================
+// Creates bordered/framed container sections with optional decorative elements
+// inspired by modern design systems (e.g., Tailwind UI, Vercel, etc.)
+//
+// Features:
+// - Clean bordered containers with customizable border styles
+// - Optional diagonal striped patterns on edges
+// - Dark/light theme variants
+// - Responsive padding and spacing
+// - Code editor-style frames
+// - Nested frame support
+//
+// Usage:
+//   <div className="framed-section">...</div>
+//   <div className="framed-section framed-section--dark">...</div>
+//   <div className="framed-section framed-section--striped">...</div>
+//   <div className="framed-section framed-section--code">...</div>
+// =============================================================================
+
+@layer components {
+  // ---------------------------------------------------------------------------
+  // Base Framed Section
+  // ---------------------------------------------------------------------------
+  .framed-section {
+    position: relative;
+    background: var(--framed-bg, var(--bg-light));
+    border: 1px solid var(--framed-border, var(--border-muted));
+    border-radius: var(--framed-radius, var(--border-radius));
+    padding: var(--framed-padding, 2rem);
+    overflow: hidden; // Contains pseudo-elements for decorative patterns
+
+    // Responsive padding adjustments
+    @include mixins.breakpoint-down(md) {
+      padding: var(--framed-padding-mobile, 1.5rem);
+    }
+
+    @include mixins.breakpoint-down(sm) {
+      padding: var(--framed-padding-mobile, 1rem);
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Dark Variant
+  // ---------------------------------------------------------------------------
+  .framed-section--dark {
+    --framed-bg: var(--bg-dark);
+    --framed-border: var(--border);
+    color: var(--text);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Light Variant (explicit)
+  // ---------------------------------------------------------------------------
+  .framed-section--light {
+    --framed-bg: var(--bg-light);
+    --framed-border: var(--border-muted);
+    color: var(--text);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Subtle Variant (minimal border)
+  // ---------------------------------------------------------------------------
+  .framed-section--subtle {
+    --framed-border: var(--border-muted);
+    border-width: 1px;
+    opacity: 0.9;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Emphasis Variant (thicker border, shadow)
+  // ---------------------------------------------------------------------------
+  .framed-section--emphasis {
+    border-width: 2px;
+    --framed-border: var(--border);
+    box-shadow: var(--shadow-combined);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Code Editor Style Variant
+  // ---------------------------------------------------------------------------
+  // Mimics a code editor frame with header bar
+  .framed-section--code {
+    --framed-bg: oklch(0.15 0 0); // Dark code editor background
+    --framed-border: oklch(0.3 0 0);
+    --framed-padding: 0;
+    color: oklch(0.9 0 0);
+    border-radius: calc(var(--border-radius) + 0.25rem);
+
+    // Code editor header bar
+    &::before {
+      content: "";
+      display: block;
+      height: 2.5rem;
+      background: oklch(0.2 0 0);
+      border-bottom: 1px solid var(--framed-border);
+      margin-bottom: 0;
+    }
+
+    // Traffic light dots (macOS style)
+    &::after {
+      content: "";
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      width: 0.75rem;
+      height: 0.75rem;
+      border-radius: 50%;
+      background: oklch(0.6 0 0);
+      box-shadow:
+        1rem 0 0 oklch(0.6 0 0),
+        2rem 0 0 oklch(0.6 0 0);
+    }
+
+    // Content area padding
+    > * {
+      padding: 1.5rem 2rem;
+
+      @include mixins.breakpoint-down(md) {
+        padding: 1.25rem 1.5rem;
+      }
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Striped Edge Decoration
+  // ---------------------------------------------------------------------------
+  // Adds diagonal striped patterns to left/right edges
+  .framed-section--striped {
+    &::before,
+    &::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 3rem;
+      pointer-events: none; // Don't interfere with interactions
+      opacity: 0.15;
+
+      // Diagonal stripe pattern using CSS gradients
+      background-image: repeating-linear-gradient(
+        -45deg,
+        var(--stripe-color, var(--border)),
+        var(--stripe-color, var(--border)) 2px,
+        transparent 2px,
+        transparent 8px
+      );
+
+      @include mixins.breakpoint-down(md) {
+        width: 2rem;
+      }
+
+      @include mixins.breakpoint-down(sm) {
+        width: 1.5rem;
+      }
+    }
+
+    // Left stripe
+    &::before {
+      left: 0;
+    }
+
+    // Right stripe
+    &::after {
+      right: 0;
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Striped Variant with Content Padding
+  // ---------------------------------------------------------------------------
+  // Automatically adds padding to account for striped edges
+  .framed-section--striped-inset {
+    @extend .framed-section--striped;
+    padding-left: calc(var(--framed-padding, 2rem) + 3rem);
+    padding-right: calc(var(--framed-padding, 2rem) + 3rem);
+
+    @include mixins.breakpoint-down(md) {
+      padding-left: calc(var(--framed-padding-mobile, 1.5rem) + 2rem);
+      padding-right: calc(var(--framed-padding-mobile, 1.5rem) + 2rem);
+    }
+
+    @include mixins.breakpoint-down(sm) {
+      padding-left: calc(var(--framed-padding-mobile, 1rem) + 1.5rem);
+      padding-right: calc(var(--framed-padding-mobile, 1rem) + 1.5rem);
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Gradient Border Variant
+  // ---------------------------------------------------------------------------
+  // Creates a gradient border effect using pseudo-elements
+  .framed-section--gradient-border {
+    border: none;
+    background: var(--framed-bg, var(--bg-light));
+    position: relative;
+    z-index: 0;
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: var(--framed-radius, var(--border-radius));
+      padding: 1px; // Border thickness
+      background: linear-gradient(
+        135deg,
+        var(--gradient-start, oklch(0.6 0.1 250)),
+        var(--gradient-end, oklch(0.7 0.1 320))
+      );
+      -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+      mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+      z-index: -1;
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Nested Frame Support
+  // ---------------------------------------------------------------------------
+  // Reduces padding and adjusts borders for nested frames
+  .framed-section .framed-section {
+    --framed-padding: 1.5rem;
+    --framed-padding-mobile: 1rem;
+    margin-top: 1rem;
+
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Spacing Utilities for Framed Sections
+  // ---------------------------------------------------------------------------
+  .framed-section + .framed-section {
+    margin-top: 2rem;
+
+    @include mixins.breakpoint-down(md) {
+      margin-top: 1.5rem;
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Header/Title within Framed Section
+  // ---------------------------------------------------------------------------
+  .framed-section__header {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--framed-border, var(--border-muted));
+
+    &:last-child {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+  }
+
+  .framed-section__title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--text);
+
+    @include mixins.breakpoint-down(md) {
+      font-size: 1.25rem;
+    }
+  }
+
+  .framed-section__description {
+    margin-top: 0.5rem;
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Content Area
+  // ---------------------------------------------------------------------------
+  .framed-section__content {
+    // Content-specific styles can be added here
+    // This class is optional for semantic markup
+  }
+
+  // ---------------------------------------------------------------------------
+  // Footer within Framed Section
+  // ---------------------------------------------------------------------------
+  .framed-section__footer {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--framed-border, var(--border-muted));
+
+    &:first-child {
+      margin-top: 0;
+      padding-top: 0;
+      border-top: none;
+    }
+  }
+}

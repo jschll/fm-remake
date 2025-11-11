@@ -1,0 +1,204 @@
+@use "../../variables" as vars;
+@use "../../mixins" as mixins;
+
+// =============================================================================
+// FRAMED SECTION COMPONENT
+// =============================================================================
+// Creates bordered/framed containers similar to Tailwind UI designs
+
+@layer components {
+  .framed-section {
+    position: relative;
+    background-color: var(--framed-bg, var(--frame-bg-base));
+    border: 1px solid var(--framed-border, var(--frame-border-default));
+    border-radius: var(--framed-radius, var(--border-radius));
+    padding: var(--framed-padding, 2rem);
+
+    @include mixins.breakpoint-down(md) {
+      padding: var(--framed-padding, 1.5rem);
+    }
+
+    @include mixins.breakpoint-down(sm) {
+      padding: var(--framed-padding, 1rem);
+    }
+
+    // Spacing between stacked sections
+    & + & {
+      margin-top: 1.5rem;
+    }
+  }
+
+  // Dark variant
+  .framed-section--dark {
+    --framed-bg: var(--frame-bg-dark);
+    --framed-border: oklch(0.3 0 0);
+    color: var(--bg-light);
+  }
+
+  // Subtle borders
+  .framed-section--subtle {
+    --framed-border: var(--border-muted);
+    border-style: dashed;
+  }
+
+  // Emphasis variant (thick borders + shadow)
+  .framed-section--emphasis {
+    --framed-border: var(--frame-border-emphasis);
+    border-width: 2px;
+    box-shadow: var(--shadow-combined);
+  }
+
+  // Code editor style
+  .framed-section--code {
+    --framed-bg: oklch(0.15 0 0);
+    --framed-border: oklch(0.25 0 0);
+    color: var(--bg-light);
+    font-family: 'Geist Mono', monospace;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2.5rem;
+      background: oklch(0.18 0 0);
+      border-bottom: 1px solid oklch(0.25 0 0);
+      border-radius: var(--border-radius) var(--border-radius) 0 0;
+    }
+
+    // Fake window controls
+    &::after {
+      content: '';
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      width: 0.75rem;
+      height: 0.75rem;
+      background: oklch(0.6 0.15 30);
+      border-radius: 50%;
+      box-shadow:
+        1rem 0 0 oklch(0.6 0.15 60),
+        2rem 0 0 oklch(0.6 0.15 150);
+      z-index: 1;
+    }
+
+    > * {
+      position: relative;
+      margin-top: 3rem;
+    }
+  }
+
+  // Gradient border
+  .framed-section--gradient {
+    border: 2px solid transparent;
+    background-image:
+      linear-gradient(var(--framed-bg, var(--frame-bg-base)), var(--framed-bg, var(--frame-bg-base))),
+      linear-gradient(135deg, oklch(0.7 0.15 250), oklch(0.7 0.15 300));
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+  }
+
+  // Striped edges (diagonal patterns on sides)
+  .framed-section--striped {
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 3rem;
+      background-image: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 10px,
+        var(--frame-stripe-color, var(--border)) 10px,
+        var(--frame-stripe-color, var(--border)) 11px
+      );
+      opacity: 0.1;
+      pointer-events: none;
+
+      @include mixins.breakpoint-down(md) {
+        width: 2rem;
+      }
+
+      @include mixins.breakpoint-down(sm) {
+        width: 1.5rem;
+      }
+    }
+
+    &::before {
+      left: 0;
+    }
+
+    &::after {
+      right: 0;
+    }
+  }
+
+  // Striped edges inset
+  .framed-section--striped-inset {
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 3rem;
+      background-image: repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 10px,
+        var(--frame-stripe-color, var(--border)) 10px,
+        var(--frame-stripe-color, var(--border)) 11px
+      );
+      opacity: 0.05;
+      pointer-events: none;
+
+      @include mixins.breakpoint-down(md) {
+        width: 2rem;
+      }
+
+      @include mixins.breakpoint-down(sm) {
+        width: 1rem;
+      }
+    }
+
+    &::before {
+      left: 0;
+    }
+
+    &::after {
+      right: 0;
+    }
+  }
+
+  // Header/Footer sections
+  .framed-section__header {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--framed-border, var(--frame-border-default));
+  }
+
+  .framed-section__footer {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--framed-border, var(--frame-border-default));
+  }
+
+  .framed-section__title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  .framed-section__description {
+    color: var(--text-muted);
+  }
+
+  // Nested frames
+  .framed-section .framed-section {
+    margin-top: 1rem;
+    padding: 1.5rem;
+  }
+}

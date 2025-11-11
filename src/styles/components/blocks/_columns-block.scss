@@ -1,0 +1,62 @@
+@use "../../variables" as *;
+@use "../../mixins" as *;
+
+// =============================================================================
+// COLUMNS BLOCK
+// =============================================================================
+// Flexible column layout with distribution controls
+
+@layer base {
+  .columns-block {
+    display: flex;
+    width: 100%;
+
+    // Gap variants
+    &--gap-sm {
+      gap: 1rem;
+    }
+
+    &--gap-md {
+      gap: 1.5rem;
+    }
+
+    &--gap-lg {
+      gap: 2rem;
+    }
+
+    // Distribution: Equal columns
+    &--equal {
+      .columns-block__column {
+        flex: 1;
+      }
+    }
+
+    // Distribution: Auto-sized columns
+    &--auto {
+      .columns-block__column {
+        flex: 0 1 auto;
+      }
+    }
+
+    // Distribution: Custom (set inline via style attribute)
+    &--custom {
+      .columns-block__column {
+        // Flex values set inline via style attribute
+      }
+    }
+
+    // Individual column
+    &__column {
+      min-width: 0; // Prevents flex items from overflowing
+    }
+
+    // Responsive: Stack on mobile
+    @include breakpoint-down(md) {
+      flex-direction: column;
+
+      &__column {
+        flex: 1 1 100% !important;
+      }
+    }
+  }
+}

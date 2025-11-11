@@ -1,0 +1,19 @@
+@use "./variables.scss";
+@use "./global.scss";
+@use "./mixins.scss";
+
+// Block system components
+@use "./components/blocks/block-error.scss";
+@use "./components/blocks/hero-block.scss";
+@use "./components/blocks/text-block.scss";
+@use "./components/blocks/image-block.scss";
+@use "./components/blocks/cta-block.scss";
+@use "./components/blocks/form-block.scss";
+@use "./components/blocks/container-block.scss";
+@use "./components/blocks/grid-block.scss";
+@use "./components/blocks/columns-block.scss";
+@use "./components/blocks/navigation-block.scss";
+
+// UI-Components
+@use "./components/ui/button.scss";
+@use "./components/ui/framed-section.scss";

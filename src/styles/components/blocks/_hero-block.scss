@@ -1,0 +1,90 @@
+@use "../../variables" as *;
+@use "../../mixins" as *;
+
+@layer base {
+  .hero-block {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    overflow: hidden;
+
+    padding: 4rem 0;
+
+    border: dashed red 2px;
+
+    // Alignment variants
+    &--left {
+      justify-content: flex-start;
+    }
+
+    &--right {
+      justify-content: flex-end;
+    }
+
+    &--center {
+      justify-content: center;
+      text-align: center;
+    }
+
+    // Content wrapper
+    &__content {
+      max-width: 800px;
+      padding: 2rem;
+      position: relative;
+      z-index: 1;
+
+      @include breakpoint-up(md) {
+        padding: 3rem;
+      }
+    }
+
+    // Title
+    &__title {
+      font-size: 3rem;
+      font-weight: 600;
+      line-height: 1.2;
+    }
+
+    // Subtitle
+    &__subtitle {
+      font-size: 20px;
+      margin-bottom: 2rem;
+      line-height: 1.5;
+
+      color: var(--text-muted);
+    }
+
+    // CTA button
+    &__cta {
+      display: inline-block;
+      padding: 1rem 2rem;
+      background-color: #007bff;
+      color: white;
+      text-decoration: none;
+      border-radius: var(--border-radius, 0.25rem);
+      font-weight: 600;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+
+      &:hover {
+        background-color: #0056b3;
+        transform: translateY(-2px);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
+
+    // Responsive adjustments
+    @include breakpoint-down(md) {
+      min-height: 40vh;
+
+      &__content {
+        padding: 1.5rem;
+      }
+    }
+  }
+}

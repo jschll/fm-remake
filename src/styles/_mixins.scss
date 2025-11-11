@@ -1,0 +1,335 @@
+@use "sass:map";
+@use "./variables" as vars;
+
+// =============================================================================
+// BREAKPOINT MIXINS
+// =============================================================================
+// Bootstrap-style responsive breakpoint mixins for consistent media queries
+// across the application.
+//
+// Usage:
+//   @include breakpoint-down(md) { ... }
+//   @include breakpoint-up(lg) { ... }
+//   @include breakpoint-between(sm, lg) { ... }
+//   @include breakpoint-only(md) { ... }
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// breakpoint-up
+// -----------------------------------------------------------------------------
+// Applies styles at the specified breakpoint and above (min-width)
+//
+// @param {String} $name - Breakpoint name (xs, sm, md, lg, xl, xxl)
+//
+// @example scss
+//   .element {
+//     @include breakpoint-up(md) {
+//       font-size: 1.5rem;
+//     }
+//   }
+//   // Output: @media (min-width: 768px) { .element { font-size: 1.5rem; } }
+
+@mixin breakpoint-up($name) {
+  $min: map.get(vars.$breakpoints, $name);
+
+  @if $min == null {
+    @error "Breakpoint '#{$name}' not found in $breakpoints map. Available breakpoints: #{map.keys(vars.$breakpoints)}";
+  }
+
+  @if $min == 0 {
+    // No media query needed for xs (mobile-first approach)
+    @content;
+  } @else {
+    @media (min-width: $min) {
+      @content;
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// breakpoint-down
+// -----------------------------------------------------------------------------
+// Applies styles below the specified breakpoint (max-width)
+// Uses 0.02px subtraction to avoid overlap with breakpoint-up
+//
+// @param {String} $name - Breakpoint name (xs, sm, md, lg, xl, xxl)
+//
+// @example scss
+//   .element {
+//     @include breakpoint-down(md) {
+//       display: none;
+//     }
+//   }
+//   // Output: @media (max-width: 767.98px) { .element { display: none; } }
+
+@mixin breakpoint-down($name) {
+  $max: map.get(vars.$breakpoints, $name);
+
+  @if $max == null {
+    @error "Breakpoint '#{$name}' not found in $breakpoints map. Available breakpoints: #{map.keys(vars.$breakpoints)}";
+  }
+
+  @if $max == 0 {
+    @error "Cannot use breakpoint-down with 'xs' breakpoint (0px). No smaller breakpoint exists.";
+  }
+
+  // Subtract 0.02px to avoid overlap with min-width queries
+  @media (max-width: calc($max - 0.02px)) {
+    @content;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// breakpoint-between
+// -----------------------------------------------------------------------------
+// Applies styles between two breakpoints (inclusive min, exclusive max)
+//
+// @param {String} $lower - Lower breakpoint name
+// @param {String} $upper - Upper breakpoint name
+//
+// @example scss
+//   .element {
+//     @include breakpoint-between(sm, lg) {
+//       padding: 2rem;
+//     }
+//   }
+//   // Output: @media (min-width: 576px) and (max-width: 991.98px) { ... }
+
+@mixin breakpoint-between($lower, $upper) {
+  $min: map.get(vars.$breakpoints, $lower);
+  $max: map.get(vars.$breakpoints, $upper);
+
+  @if $min == null {
+    @error "Lower breakpoint '#{$lower}' not found in $breakpoints map. Available breakpoints: #{map.keys(vars.$breakpoints)}";
+  }
+
+  @if $max == null {
+    @error "Upper breakpoint '#{$upper}' not found in $breakpoints map. Available breakpoints: #{map.keys(vars.$breakpoints)}";
+  }
+
+  @if $min >= $max {
+    @error "Lower breakpoint '#{$lower}' (#{$min}) must be smaller than upper breakpoint '#{$upper}' (#{$max})";
+  }
+
+  @if $min == 0 {
+    // If lower bound is xs (0), only apply max-width
+    @media (max-width: calc($max - 0.02px)) {
+      @content;
+    }
+  } @else {
+    @media (min-width: $min) and (max-width: calc($max - 0.02px)) {
+      @content;
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// breakpoint-only
+// -----------------------------------------------------------------------------
+// Applies styles only at the specified breakpoint range
+// (between current breakpoint and the next one)
+//
+// @param {String} $name - Breakpoint name
+//
+// @example scss
+//   .element {
+//     @include breakpoint-only(md) {
+//       background: blue;
+//     }
+//   }
+//   // Output: @media (min-width: 768px) and (max-width: 991.98px) { ... }
+
+@mixin breakpoint-only($name) {
+  $names: map.keys(vars.$breakpoints);
+  $index: index($names, $name);
+
+  @if $index == null {
+    @error "Breakpoint '#{$name}' not found in $breakpoints map. Available breakpoints: #{$names}";
+  }
+
+  // If this is the last breakpoint, use breakpoint-up
+  @if $index == length($names) {
+    @include breakpoint-up($name) {
+      @content;
+    }
+  } @else {
+    // Otherwise, use breakpoint-between with the current and next breakpoint
+    $next-name: nth($names, $index + 1);
+    @include breakpoint-between($name, $next-name) {
+      @content;
+    }
+  }
+}
+
+// =============================================================================
+// ADDITIONAL UTILITY MIXINS
+// =============================================================================
+// Add more reusable mixins below as your project grows
+
+// Example: Clearfix mixin for floated layouts
+@mixin clearfix {
+  &::after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}
+
+// Example: Visually hidden but accessible to screen readers
+@mixin visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+// Example: Aspect ratio container
+@mixin aspect-ratio($width: 16, $height: 9) {
+  aspect-ratio: #{$width} / #{$height};
+
+  // Fallback for older browsers
+  @supports not (aspect-ratio: 1 / 1) {
+    position: relative;
+
+    &::before {
+      content: "";
+      display: block;
+      padding-top: calc(($height / $width) * 100%);
+    }
+
+    > * {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+  }
+}
+
+// =============================================================================
+// FRAMED SECTION UTILITY MIXINS
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// diagonal-stripes
+// -----------------------------------------------------------------------------
+// Creates diagonal stripe pattern background
+// Used for decorative edge patterns in framed sections
+//
+// @param {Color} $color - Stripe color (default: var(--border))
+// @param {Number} $angle - Angle of stripes in degrees (default: -45deg)
+// @param {Number} $stripe-width - Width of each stripe (default: 2px)
+// @param {Number} $spacing - Space between stripes (default: 8px)
+// @param {Number} $opacity - Opacity of pattern (default: 0.15)
+//
+// @example scss
+//   .element {
+//     &::before {
+//       @include diagonal-stripes(oklch(0.6 0 0), -45deg, 2px, 10px, 0.2);
+//     }
+//   }
+
+@mixin diagonal-stripes(
+  $color: var(--border),
+  $angle: -45deg,
+  $stripe-width: 2px,
+  $spacing: 8px,
+  $opacity: 0.15
+) {
+  background-image: repeating-linear-gradient(
+    $angle,
+    $color,
+    $color $stripe-width,
+    transparent $stripe-width,
+    transparent ($stripe-width + $spacing)
+  );
+  opacity: $opacity;
+}
+
+// -----------------------------------------------------------------------------
+// gradient-border
+// -----------------------------------------------------------------------------
+// Creates a gradient border using CSS mask technique
+// Works by using a pseudo-element with gradient background and mask
+//
+// @param {Color} $start - Gradient start color
+// @param {Color} $end - Gradient end color
+// @param {Number} $angle - Gradient angle (default: 135deg)
+// @param {Number} $width - Border width (default: 1px)
+// @param {Number} $radius - Border radius (default: var(--border-radius))
+//
+// @example scss
+//   .element {
+//     @include gradient-border(oklch(0.6 0.1 250), oklch(0.7 0.1 320));
+//   }
+
+@mixin gradient-border(
+  $start: oklch(0.6 0.1 250),
+  $end: oklch(0.7 0.1 320),
+  $angle: 135deg,
+  $width: 1px,
+  $radius: var(--border-radius)
+) {
+  position: relative;
+  border: none;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: $radius;
+    padding: $width;
+    background: linear-gradient($angle, $start, $end);
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: -1;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// frame-structure
+// -----------------------------------------------------------------------------
+// Applies consistent structure styling for framed sections
+// Includes border, padding, radius, and overflow handling
+//
+// @param {Color} $bg - Background color
+// @param {Color} $border - Border color
+// @param {Number} $padding - Padding size
+// @param {Number} $radius - Border radius
+//
+// @example scss
+//   .custom-frame {
+//     @include frame-structure(
+//       var(--bg-light),
+//       var(--border),
+//       2rem,
+//       var(--border-radius)
+//     );
+//   }
+
+@mixin frame-structure(
+  $bg: var(--bg-light),
+  $border: var(--border-muted),
+  $padding: 2rem,
+  $radius: var(--border-radius)
+) {
+  position: relative;
+  background: $bg;
+  border: 1px solid $border;
+  border-radius: $radius;
+  padding: $padding;
+  overflow: hidden;
+}

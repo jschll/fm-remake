@@ -1,0 +1,33 @@
+@use "../../variables" as *;
+@use "../../mixins" as *;
+
+// =============================================================================
+// IMAGE BLOCK
+// =============================================================================
+// Responsive image with optional caption
+
+@layer base {
+  .image-block {
+    margin: 2rem 0;
+    display: flex;
+    flex-direction: column;
+
+    // Image element
+    &__img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      border-radius: var(--border-radius, 0.25rem);
+    }
+
+    // Caption
+    &__caption {
+      margin-top: 0.75rem;
+      font-size: 0.875rem;
+      color: #6c757d;
+      font-style: italic;
+      text-align: center;
+      padding: 0 1rem;
+    }
+  }
+}

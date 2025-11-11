@@ -1,0 +1,119 @@
+@use "../../variables" as *;
+@use "../../mixins" as *;
+
+// =============================================================================
+// FORM BLOCK
+// =============================================================================
+// Dynamic form builder with various field types
+
+@layer base {
+  .form-block {
+    margin: 2rem 0;
+    max-width: 600px;
+
+    // Form title
+    &__title {
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-weight: bold;
+      margin-bottom: 1.5rem;
+    }
+
+    // Form element
+    &__form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    // Field wrapper
+    &__field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    // Label
+    &__label {
+      font-weight: 600;
+      font-size: 0.875rem;
+      color: #333;
+      display: flex;
+      align-items: center;
+    }
+
+    // Required indicator
+    &__required {
+      color: #dc3545;
+      margin-left: 0.25rem;
+    }
+
+    // Base input styles
+    &__input,
+    &__textarea,
+    &__select {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #ced4da;
+      border-radius: var(--border-radius, 0.25rem);
+      font-size: 1rem;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+      &:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+      }
+
+      &::placeholder {
+        color: #6c757d;
+      }
+    }
+
+    // Textarea specific
+    &__textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    // Select specific
+    &__select {
+      cursor: pointer;
+      background-color: white;
+    }
+
+    // Checkbox specific
+    &__checkbox {
+      width: 1.25rem;
+      height: 1.25rem;
+      cursor: pointer;
+    }
+
+    // Submit button
+    &__submit {
+      padding: 0.875rem 2rem;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: var(--border-radius, 0.25rem);
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+
+      &:hover:not(:disabled) {
+        background-color: #0056b3;
+        transform: translateY(-2px);
+      }
+
+      &:active:not(:disabled) {
+        transform: translateY(0);
+      }
+
+      &:disabled {
+        background-color: #6c757d;
+        cursor: not-allowed;
+        opacity: 0.6;
+      }
+    }
+  }
+}

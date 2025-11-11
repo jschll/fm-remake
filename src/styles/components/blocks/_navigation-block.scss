@@ -1,0 +1,66 @@
+@use "../../variables" as *;
+@use "../../mixins" as *;
+
+@layer base {
+    :root {
+        --navigation-display: flex;
+        --navigation-justify: space-between;
+
+        --navigation-max-width: 1280px;
+
+        --navigation-padding-x: 1rem;
+        --navigation-padding-y: 1rem;
+    }
+}
+
+.navigation {
+    position: fixed;
+    z-index: 668;
+    top: 1rem;
+    display: var(--navigation-display);
+    justify-content: var(--navigation-justify);
+
+    max-width: var(--navigation-max-width);
+    width: 100%;
+
+    padding: var(--navigation-padding-y) var(--navigation-padding-x);
+
+    border-radius: var(--border-radius);
+    background-color: rgba(#fff, 0.5);
+    box-shadow: var(--shadow-light);
+    backdrop-filter: blur(10px);
+
+
+    &-brand {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        
+        &-name {
+            font-weight: 200;
+            font-size: 16px;
+        }
+    }
+
+    &-links {
+        display: flex;
+        gap: 0.25rem;
+    }
+
+    &-link {
+        display: flex;
+        align-items: center;
+        gap: 0.125rem;
+        
+        padding: 0.75rem 1.25rem;
+        font-size: 14px;
+        border-radius: var(--border-radius);
+
+        transition: background-color 0.3s ease-in-out;
+
+        &:hover {
+            background-color: var(--bg-dark);
+        }
+    }
+}

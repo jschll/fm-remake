@@ -1,0 +1,123 @@
+@use "../../variables" as *;
+@use "../../mixins" as *;
+
+// =============================================================================
+// GRID BLOCK
+// =============================================================================
+// Responsive CSS grid layout for arranging child blocks
+
+@layer base {
+  .grid-block {
+    display: grid;
+    width: 100%;
+
+    // Gap variants
+    &--gap-sm {
+      gap: 1rem;
+    }
+
+    &--gap-md {
+      gap: 1.5rem;
+    }
+
+    &--gap-lg {
+      gap: 2rem;
+    }
+
+    // Fixed column layouts
+    &--columns-1 {
+      grid-template-columns: repeat(1, 1fr);
+    }
+
+    &--columns-2 {
+      grid-template-columns: repeat(2, 1fr);
+
+      @include breakpoint-down(md) {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    &--columns-3 {
+      grid-template-columns: repeat(3, 1fr);
+
+      @include breakpoint-down(lg) {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      @include breakpoint-down(md) {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    &--columns-4 {
+      grid-template-columns: repeat(4, 1fr);
+
+      @include breakpoint-down(xl) {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      @include breakpoint-down(lg) {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      @include breakpoint-down(md) {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    // Responsive column layouts
+    &--mobile-1 {
+      @include breakpoint-down(md) {
+        grid-template-columns: repeat(1, 1fr);
+      }
+    }
+
+    &--mobile-2 {
+      @include breakpoint-down(md) {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    &--tablet-1 {
+      @include breakpoint-between(md, lg) {
+        grid-template-columns: repeat(1, 1fr);
+      }
+    }
+
+    &--tablet-2 {
+      @include breakpoint-between(md, lg) {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    &--tablet-3 {
+      @include breakpoint-between(md, lg) {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    &--desktop-1 {
+      @include breakpoint-up(lg) {
+        grid-template-columns: repeat(1, 1fr);
+      }
+    }
+
+    &--desktop-2 {
+      @include breakpoint-up(lg) {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    &--desktop-3 {
+      @include breakpoint-up(lg) {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    &--desktop-4 {
+      @include breakpoint-up(lg) {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+  }
+}
